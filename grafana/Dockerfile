@@ -1,3 +1,3 @@
 FROM grafana/grafana:latest
-COPY provisioning /etc/grafana/provisioning
-COPY dashboards /var/lib/grafana/dashboards
+COPY --chown=grafana:grafana provisioning /etc/grafana/provisioning
+COPY --chown=grafana:grafana dashboards /var/lib/grafana/dashboards
