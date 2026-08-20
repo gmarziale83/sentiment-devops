@@ -25,7 +25,7 @@ pipeline {
         stage('Build & Deploy Containers') {
             steps {
                 // In ambiente reale/Agent con Docker installato:
-                sh 'docker compose down || true'
+                sh 'docker compose down -v --remove-orphans || true'
                 sh 'docker compose up --build -d'
                 sh 'sleep 5 || timeout /t 5'
             }
