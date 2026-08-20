@@ -12,7 +12,6 @@ L'infrastruttura si compone dei seguenti moduli integrati tramite Docker Compose
 * **Monitoraggio (Prometheus & Grafana)**: Prometheus raccoglie periodicamente le metriche dall'API, mentre Grafana le visualizza tramite una dashboard pre-configurata via codice (*dashboard provisioning*).
 
 ---
-
 ## 📁 Struttura del Repository
 
 ```text
@@ -38,7 +37,6 @@ sentiment-devops/
 └── README.md                      # Documentazione di progetto
 
 ```
-
 ---
 
 ## ⚙️ Configurazione e Avvio Rapido
@@ -56,14 +54,12 @@ Per compilare ed avviare l'intero stack in background esegui:
 docker compose up --build -d
 
 ```
-
 Verifica lo stato dei container:
 
 ```bash
 docker compose ps
 
 ```
-
 ---
 
 ## 🔌 API Endpoints
@@ -81,7 +77,6 @@ docker compose ps
 }
 
 ```
-
 **Response Body (200 OK)**:
 
 ```json
@@ -91,14 +86,12 @@ docker compose ps
 }
 
 ```
-
 ### 2. Metriche Prometheus
 
 * **URL**: `GET /metrics`
 * **Response**: Formato testo conforme allo standard Prometheus avente metriche su tempo di risposta, errori di predizione, contatore richieste, utilizzo CPU e RAM.
 
 ---
-
 ## 📊 Dashboard di Monitoraggio (Grafana)
 
 * **URL Grafana**: `http://localhost:3000` (Credenziali: `admin` / `admin`)
@@ -113,7 +106,6 @@ La dashboard **Sentiment Analysis Dashboard** viene caricata automaticamente all
 5. **Utilizzo RAM**: Memoria fisica allocata espressa in Megabytes/Gigabytes.
 
 ---
-
 ## 🔄 Pipeline CI/CD (Jenkins)
 
 Lo script `Jenkinsfile` definisce una pipeline a 4 fasi:
@@ -125,7 +117,6 @@ Lo script `Jenkinsfile` definisce una pipeline a 4 fasi:
 5. **Post Actions**: Notifica dell'esito della pipeline via log/email e pulizia del workspace.
 
 ---
-
 ## 🛠 Manutenzione e Troubleshooting
 
 * **Visualizzare i log in tempo reale**:
@@ -134,13 +125,11 @@ docker compose logs -f api
 
 ```
 
-
 * **Arresto dell'infrastruttura**:
 ```bash
 docker compose down
 
 ```
-
 
 * **Arresto con rimozione dei volumi**:
 ```bash
@@ -148,9 +137,32 @@ docker compose down -v
 
 ```
 
-
 * **Esecuzione manuale dei test in locale**:
 ```bash
 pytest -W ignore::DeprecationWarning
 
 ```
+## 🤖 Configurazione CI/CD e Webhook (Jenkins)
+
+Per collegare questo repository a un server Jenkins e attivare il trigger automatico della pipeline ad ogni commit (`git push`), seguire questi passaggi:
+
+### 1. Configurazione della Pipeline su Jenkins
+1. Creare un nuovo Job selezionando la tipologia **Pipeline**.
+2. Nella sezione **Build Triggers**, spuntare la casella **GitHub hook trigger for GITScm polling**.
+3. Nella sezione **Pipeline**:
+   * **Definition**: Impostare su *Pipeline script from SCM*.
+   * **SCM**: Selezionare *Git*.
+   * **Repository URL**: Inserire l'URL pubblico del repository (`https://github.com/TUO-USERNAME/sentiment-devops.git`).
+   * **Branch Specifier**: Specificare `*/main`.
+   * **Script Path**: Indicare `Jenkinsfile`.
+4. Cliccare su **Salva**.
+
+### 2. Attivazione del Webhook Automatico su GitHub
+1. Aprire il repository su GitHub -> **Settings** -> **Webhooks** -> **Add webhook**.
+2. **Payload URL**: Inserire l'indirizzo del server Jenkins seguito dall'endpoint dedicato:
+   `http://<IP-SERVER-JENKINS>:8080/github-webhook/`
+3. **Content type**: Selezionare `application/json`.
+4. **Trigger events**: Selezionare *Just the push event*.
+5. Cliccare su **Add webhook**.
+
+A questo punto la catena di integrazione è completa: ogni commit pushato sul branch `main` notificherà Jenkins, che eseguirà in automatico gli stage definiti nel `Jenkinsfile`.
