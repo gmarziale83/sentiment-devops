@@ -1,7 +1,9 @@
 
 services:
   api:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: sentiment_api
     ports:
       - "8000:8000"
@@ -9,6 +11,7 @@ services:
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
+    user: root
     ports:
       - "9090:9090"
     volumes:
@@ -21,6 +24,7 @@ services:
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
+    user: root
     ports:
       - "3000:3000"
     volumes:
