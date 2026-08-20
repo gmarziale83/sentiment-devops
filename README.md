@@ -168,3 +168,6 @@ Per collegare questo repository a un server Jenkins e attivare il trigger automa
 A questo punto la catena di integrazione è completa: ogni commit pushato sul branch `main` notificherà Jenkins, che eseguirà in automatico gli stage definiti nel `Jenkinsfile`.
 
 Il repository github pubblico del progetto è il seguente :  https://github.com/gmarziale83/sentiment-devops
+E' stato testato con successo il trigger della pipeline jenkins al push su repository 
+ho inserito tre screenshoot di jenkins che mostrano l'esecuzione con successo della pipeline:
+jenkins-success_trigger.png, jenkins-success_stages.png e jenkins-success_stages2.png
