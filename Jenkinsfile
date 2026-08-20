@@ -22,6 +22,14 @@ pipeline {
             }
         }
 
+        stage('Fix Permissions') {
+            steps {
+                // Imposta i permessi corretti prima che Docker crei i volumi
+                sh 'chown -R 65534:65534 ./prometheus'
+                sh 'chown -R 472:472 ./grafana'
+            }
+        }
+
         stage('Build & Deploy Containers') {
             steps {
                 // In ambiente reale/Agent con Docker installato:
