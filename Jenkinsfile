@@ -27,6 +27,7 @@ pipeline {
                 // In ambiente reale/Agent con Docker installato:
                 sh 'docker compose down || true'
                 sh 'docker compose up --build -d'
+                sh 'sleep 5 || timeout /t 5'
             }
         }
 
@@ -39,19 +40,31 @@ pipeline {
 
     post {
         always {
-            cleanWs()
+           deleteDir()
         }
         success {
-            echo 'SUCCESS: Pipeline completata con successo.'
-            mail to: "${env.NOTIFICATION_EMAIL}",
-                 subject: "SUCCESS: Pipeline #${env.BUILD_NUMBER} - ${env.JOB_NAME}",
-                 body: "La pipeline di Sentiment Analysis ha superato i test ed eseguito il deploy con successo."
+            echo 'SUCCESS NOTIFICATION: Pipeline ed eseguito il deploy con successo.'
+            script {
+                try {
+                    mail to: "${env.NOTIFICATION_EMAIL}",
+                         subject: "SUCCESS: Pipeline #${env.BUILD_NUMBER} - ${env.JOB_NAME}",
+                         body: "Deploy completato con successo."
+                } catch (e) {
+                    echo "Notifica Email non inviata (Server SMTP non configurato): ${e.message}"
+                }
+            }
         }
         failure {
-            echo 'FAILURE: Errore durante l esecuzione della Pipeline.'
-            mail to: "${env.NOTIFICATION_EMAIL}",
-                 subject: "FAILURE: Pipeline #${env.BUILD_NUMBER} - ${env.JOB_NAME}",
-                 body: "Errore durante la build/deploy della pipeline #${env.BUILD_NUMBER}. Verificare i log di Jenkins."
+            echo 'FAILURE NOTIFICATION: Errore durante l esecuzione della Pipeline.'
+            script {
+                try {
+                    mail to: "${env.NOTIFICATION_EMAIL}",
+                         subject: "FAILURE: Pipeline #${env.BUILD_NUMBER} - ${env.JOB_NAME}",
+                         body: "Errore durante il deploy della pipeline #${env.BUILD_NUMBER}."
+                } catch (e) {
+                    echo "Notifica Email non inviata (Server SMTP non configurato): ${e.message}"
+                }
+            }
         }
     }
 }
