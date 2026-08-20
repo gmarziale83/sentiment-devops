@@ -166,3 +166,5 @@ Per collegare questo repository a un server Jenkins e attivare il trigger automa
 5. Cliccare su **Add webhook**.
 
 A questo punto la catena di integrazione è completa: ogni commit pushato sul branch `main` notificherà Jenkins, che eseguirà in automatico gli stage definiti nel `Jenkinsfile`.
+
+Il repository github pubblico del progetto è il seguente :  https://github.com/gmarziale83/sentiment-devops
